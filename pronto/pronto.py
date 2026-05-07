@@ -96,4 +96,31 @@ def parse_topfilter(cfg : configparser.ConfigParser, output_dir: str) -> list:
 			top_filter_dict.append(filter)
 	return top_filter_dict
 
+# Filter small variant data based on keyword being present in filter column
+def filter_small_variant_data(data: pandas.DataFrame, sample_id: str, filter_column: str, keyword: str) -> pandas.DataFrame:
 
+	# check if required columns are present in data
+	for column_name in [filter_column, "IGV_QC", "Class_judgement", "SampleID"]:
+		if column_name not in data.columns:
+			logging.error("Column {} not found in data".format(column_name))
+			raise ValueError
+	
+	# only consider data for the specified sample_id
+	data = data[data['SampleID'] == sample_id]
+
+	# check if IGV_QC is "Not OK" but Class_judgement is not "exclude"
+	if data[(data['IGV_QC'] == "Not OK") & (data['Class_judgement'] != "exclude")].shape[0] > 0:
+		logging.error("""Dataset error: 
+		IGV_QC is 'Not OK', but Class_judgement is not 'exclude'. Please check the QC Excel file and fix the mistake before run this script again!
+		""")
+		raise ValueError
+	
+	# filter according to keyword being present or not in filter column
+	if keyword.startswith('!'):
+		keys = keyword.replace('!', '').split(' && ')
+		for key in keys:
+			data = data[~data[filter_column].str.contains(key)] # remove rows that contain the key in filter column
+	else:
+		data = data[data[filter_column].str.contains(keyword.replace(',', '|'), na=False)] # only keep rows that contain the keyword in filter column
+
+	return data
