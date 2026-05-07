@@ -1,3 +1,4 @@
+import configparser
 import pandas
 import pptx
 import pytest
@@ -416,3 +417,130 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
         pronto.pronto.add_table_name(shapes, *inputs)
         check_shape(shapes[0], *want_shape)
         check_paragraph(shapes[0].text_frame.paragraphs[0], *want_paragraph)
+
+@pytest.mark.parametrize(
+    "inputs, exception, want",
+    [
+        (
+            (
+                {
+                    'FILTER0-1': {
+                        'filter_column': 'col1,col2',
+                        'key_word': 'keyword1',
+                        'columns': 'col1,col2',
+                        'filter_column_add': 'col1',
+                        'output_table': 'output_table',
+                        'min_depth_tumor_dna': '0',
+                    }
+                },
+                "output_dir"
+            ),
+            does_not_raise(),
+            [
+                    {
+                        'filter_column': 'col1,col2',
+                        'key_word': 'keyword1',
+                        'columns': 'col1,col2',
+                        'filter_column_add': 'col1',
+                        'output_table': 'output_table',
+                        'min_depth_tumor_dna': '0',
+                        'filter_columns': ['col1', 'col2'],
+                        'pre_table_output_path': 'output_dir/output_table_pre.txt',
+                        'table_output_path': 'output_dir/output_table.txt',
+                    }
+            ],
+        ),
+        (
+            (
+                {
+                    'FILTER0-1': {
+                        'filter_column': 'col1,col2',
+                        'key_word': 'keyword1',
+                        'columns': 'col1,col2',
+                        'output_table': 'output_table',
+                        'min_depth_tumor_dna': '0',
+                    }
+                },
+                "output_dir"
+            ),
+            does_not_raise(),
+            [
+                    {
+                        'filter_column': 'col1,col2',
+                        'key_word': 'keyword1',
+                        'columns': 'col1,col2',
+                        'filter_column_add': None,
+                        'output_table': 'output_table',
+                        'min_depth_tumor_dna': '0',
+                        'filter_columns': ['col1', 'col2'],
+                        'pre_table_output_path': 'output_dir/output_table_pre.txt',
+                        'table_output_path': 'output_dir/output_table.txt',
+                    }
+            ],
+        ),
+        (
+            (
+                {
+                    'FILTER0-1': {
+                        'filter_column': 'col1,col2',
+                        'key_word': 'keyword1',
+                        'columns': 'col1,col2',
+                        'output_table': 'output_table',
+                        'filter_column_add': 'col1',
+                    }
+                },
+                "output_dir"
+            ),
+            does_not_raise(),
+            [
+                    {
+                        'filter_column': 'col1,col2',
+                        'key_word': 'keyword1',
+                        'columns': 'col1,col2',
+                        'filter_column_add': 'col1',
+                        'output_table': 'output_table',
+                        'min_depth_tumor_dna': None,
+                        'filter_columns': ['col1', 'col2'],
+                        'pre_table_output_path': 'output_dir/output_table_pre.txt',
+                        'table_output_path': 'output_dir/output_table.txt',
+                    }
+            ],
+        ),
+        (
+            (
+                {
+                    'FILTER0-1': {
+                        'filter_column': 'col1',
+                        'key_word': 'keyword1',
+                        'columns': 'col1,col2',
+                        'output_table': 'output_table',
+                        'filter_column_add': 'col1',
+                        'min_depth_tumor_dna': '0',
+                    }
+                },
+                "output_dir"
+            ),
+            does_not_raise(),
+            [
+                    {
+                        'filter_column': 'col1',
+                        'key_word': 'keyword1',
+                        'columns': 'col1,col2',
+                        'filter_column_add': 'col1',
+                        'output_table': 'output_table',
+                        'min_depth_tumor_dna': '0',
+                        'filter_columns': ['col1'],
+                        'pre_table_output_path': 'output_dir/output_table_pre.txt',
+                        'table_output_path': 'output_dir/output_table.txt',
+                    }
+            ],
+        ),
+    ]
+)
+def test_parse_topfilter(inputs, exception, want):
+    with exception:
+        cfg = configparser.ConfigParser()
+        cfg.read_dict(inputs[0])
+        print(dict(cfg["FILTER0-1"]))
+        topfilters = pronto.pronto.parse_topfilter(cfg, inputs[1])
+        assert topfilters == want
