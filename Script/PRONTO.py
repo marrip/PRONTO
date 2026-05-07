@@ -229,32 +229,6 @@ def read_tsv_col(data_file,filter_column,key_word,columns,MTB_format):
 	return data
 
 
-def add_filter_column_into_table(data_config,filter_column_add):
-	data = []
-	for i, row in enumerate(data_config):
-		row = [item.replace('\n', '') for item in row]
-		if(row[-1] == ''):
-			row.pop()
-		if(i == 0):
-			row.append(filter_column_add+'\n')
-		else:
-			row.append("Yes\n")
-		data.append(row)
-	return data
-
-
-def filter_depth_tumor_all_col(data_config,depth_tumor_DNA):
-	data = []
-	data.append(data_config[0])
-	p = data_config[0].index('Depth_tumor_DNA\t')
-	for row in data_config:
-		if(row[p] != 'Depth_tumor_DNA\t' and row[p] != ''):
-			num = row[p].split('\t')[0]
-			if(int(num) >= depth_tumor_DNA):
-				data.append(row)
-	return data
-
-
 def filter_depth_tumor_cols(data_config,depth_tumor_DNA):
 	data = [[] for n in range(len(data_config))]
 	data[0] = data_config[0]
@@ -1373,80 +1347,39 @@ def main(argv):
 				for i in range(0,filter_col_nu_config+1):
 					filter_section = str(i)
 					if(filter_section == "0"):
-						all_data_filter = []
-						top_filter = int(cfg.get("INPUT", "top_filter")) + 1
-						for top_filter_num in range(1,top_filter):	
-							filter_column = cfg.get("FILTER0-"+str(top_filter_num), "filter_column")
-							key_word = cfg.get("FILTER0-"+str(top_filter_num), "key_word")
-							columns = cfg.get("FILTER0-"+str(top_filter_num), "columns")
-							try:
-								filter_column_add = cfg.get("FILTER0-"+str(top_filter_num), "filter_column_add")
-							except:
-								filter_column_add = ""
-							try:
-								filter_min_depth_tumor_DNA = int(cfg.get("FILTER0-"+str(top_filter_num), "min_depth_tumor_DNA"))
-							except:
-								filter_min_depth_tumor_DNA = ""
-							output_table = cfg.get("FILTER0-"+str(top_filter_num), "output_table")
-							output_table_file_config_pre = output_file_preMTB_table_path + "_" + output_table + "_pre.txt"
-							output_table_file_config = output_file_preMTB_table_path + "_" + output_table + ".txt"
-							if(',' in filter_column):
-								for column in filter_column.split(','):
-									all_data = read_tsv(data_file_small_variant_table,column,key_word)
-										
-							else:
-								all_data = read_tsv(data_file_small_variant_table,filter_column,key_word)
-							if(filter_column_add != ""):
-								all_data = add_filter_column_into_table(all_data,filter_column_add)
-							if(filter_min_depth_tumor_DNA != ""):
-								all_data = filter_depth_tumor_all_col(all_data,filter_min_depth_tumor_DNA)
-							write_exl(output_table_file_config_pre,all_data)
-							clear_blank_line(output_table_file_config_pre,output_table_file_config)
-							all_data_filter.append(all_data)
+						concat_data = pandas.DataFrame()
+						topfilters = pronto.parse_topfilter(cfg, output_file_preMTB_table_path)
+						for filter in topfilters:
+							for filter_column in filter['filter_columns']:
+								small_variant_data = pandas.read.csv(data_file_small_variant_table, sep='\t')
+								try:
+									small_variant_data = pronto.filter_small_variant_data(small_variant_data, DNA_sampleID, filter_column, filter['key_word'])
+								except ValueError:
+									sys.exit(1)
+							if filter['filter_column_add']:
+								small_variant_data[filter['filter_column_add']] = 'Yes'
+							if filter['filter_depth_tumor_dna']:
+								small_variant_data = small_variant_data[small_variant_data['Depth_tumor_DNA'] >= filter['filter_min_depth_tumor_dna']]
+							small_variant_data.write_csv(filter['table_output_path'], sep='\t', index=False)
+							concat_data = pandas.concat([concat_data, small_variant_data])
 						
-						all_data_filter = sum(all_data_filter, [])
-						for i in range(len(all_data_filter)):
-							if(i == 0):
-								header_length = len(all_data_filter[i])
-							else:
-								if(len(all_data_filter[i]) < header_length):
-									count = header_length - len(all_data_filter[i])
-									all_data_filter[i] = [[item.replace('\n', '') for item in cell] for cell in all_data_filter[i]]
-									all_data_filter[i].pop()
-									for j in range(1, count):
-										all_data_filter[i].append(' \t')
-									all_data_filter[i].append('\n')
+						concat_data = concat_data.drop_duplicates()
+						for i, irow in concat_data.iterrows():
+							for j, jrow in concat_data.iterrows():
+								# avoid comparing the same rows twice
+								if i >= j:
+									continue
 
-						unique_data = []
-						for current in all_data_filter:
-							if(current[-1] == '\n'):
-								current.pop()
-							if(current[-1].endswith('\n\t')):
-								current[-1] = current[-1].replace('\n\t', '\n')
-							is_appear = False
-							for existing in unique_data:
-								if(len(existing) > len(current)):
-									current_content = current.copy()
-									current_content[-1] = current[-1].replace('\n', '\t')
-									for i in range(len(existing) - len(current_content) + 1):
-										if(existing[i:i+len(current_content)] == current_content):
-											is_appear = True
-											# Only print last column for the rescued variants which are not include in Filter0-3.
-											if(existing[-1] == 'Yes\n'):
-												existing[-1] = '\n'
-											break
-								if is_appear:
-									break
-								if(existing == current):
-									is_appear = True
-									break
-							if not is_appear:
-								unique_data.append(current)
-
-						top_filter_output_file_pre = output_file_preMTB_table_path + "_preMTB_workingTable_pre.txt"
-						top_filter_output_file = output_file_preMTB_table_path + "_preMTB_workingTable.txt"
-						write_exl(top_filter_output_file_pre,unique_data)
-						clear_blank_line(top_filter_output_file_pre,top_filter_output_file)
+								# get the difference between the two rows and check if the only different is the filter column with NA value
+								diff = irow.compare(jrow)
+								if len(diff) == 1 and diff.isna().any().any():
+									# if yes, set the filter column with NA value to empty string in both rows
+									concat_data.at[i, diff.index.tolist()[0]] = ''
+									concat_data.at[j, diff.index.tolist()[0]] = ''
+						# remove duplicates
+						concat_data = concat_data.drop_duplicates()
+						top_filter_output_file = "{}_preMTB_workingTable.txt".format(output_file_preMTB_table_path)
+						concat_data.write_csv(top_filter_output_file, sep='\t', index=False)
 						continue
 
 					if(filter_section == "1"):
