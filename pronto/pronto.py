@@ -1,3 +1,4 @@
+import configparser
 import glob
 import logging
 import os
@@ -78,3 +79,21 @@ def add_table_name(shapes: pptx.shapes.shapetree.SlideShapes, table_name: str, l
 	paragraph.font.size = pptx.util.Pt(font_size)
 	paragraph.font.bold = True
 	paragraph.alignment = pptx.enum.text.PP_ALIGN.CENTER
+
+# parse topfilter sections in config file and construct list of topfilter dictionaries
+def parse_topfilter(cfg : configparser.ConfigParser, output_dir: str) -> list:
+	top_filter_dict = []
+	for section in cfg.sections():
+		if section.startswith("FILTER0-"):
+			filter = dict(cfg[section])
+			filter["filter_columns"] = filter["filter_column"].split(",")
+			if "filter_column_add" not in filter:
+				filter["filter_column_add"] = None
+			if "min_depth_tumor_dna" not in filter:
+				filter["min_depth_tumor_dna"] = None
+			filter["pre_table_output_path"] = os.path.join(output_dir, "{}_pre.txt".format(filter["output_table"]))
+			filter["table_output_path"] = os.path.join(output_dir, "{}.txt".format(filter["output_table"]))
+			top_filter_dict.append(filter)
+	return top_filter_dict
+
+
