@@ -1351,7 +1351,7 @@ def main(argv):
 						topfilters = pronto.parse_topfilter(cfg, output_file_preMTB_table_path)
 						for filter in topfilters:
 							for filter_column in filter['filter_columns']:
-								small_variant_data = pandas.read_csv(data_file_small_variant_table, sep='\t')
+								small_variant_data = pandas.read_csv(data_file_small_variant_table, sep='\t', comment='#')
 								try:
 									small_variant_data = pronto.filter_small_variant_data(small_variant_data, DNA_sampleID, filter_column, filter['key_word'])
 								except ValueError:
