@@ -1358,9 +1358,9 @@ def main(argv):
 									sys.exit(1)
 							if filter['filter_column_add']:
 								small_variant_data[filter['filter_column_add']] = 'Yes'
-							if filter['filter_depth_tumor_dna']:
-								small_variant_data = small_variant_data[small_variant_data['Depth_tumor_DNA'] >= filter['filter_min_depth_tumor_dna']]
-							small_variant_data.write_csv(filter['table_output_path'], sep='\t', index=False)
+							if filter['min_depth_tumor_dna']:
+								small_variant_data = small_variant_data[small_variant_data['Depth_tumor_DNA'] >= int(filter['min_depth_tumor_dna'])]
+							small_variant_data.to_csv(filter['table_output_path'], sep='\t', index=False)
 							concat_data = pandas.concat([concat_data, small_variant_data])
 						
 						concat_data = concat_data.drop_duplicates()
