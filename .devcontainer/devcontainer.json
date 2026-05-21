@@ -18,6 +18,11 @@
 			]
 		}
 	},
+	// Proxy vars
+    "containerEnv": {
+       "http_proxy": "http://proxy.ihelse.net:3128",
+       "https_proxy": "http://proxy.ihelse.net:3128",
+    },
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [9000],
