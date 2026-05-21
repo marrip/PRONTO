@@ -91,8 +91,8 @@ def parse_topfilter(cfg : configparser.ConfigParser, output_dir: str) -> list:
 				filter["filter_column_add"] = None
 			if "min_depth_tumor_dna" not in filter:
 				filter["min_depth_tumor_dna"] = None
-			filter["pre_table_output_path"] = os.path.join(output_dir, "{}_pre.txt".format(filter["output_table"]))
-			filter["table_output_path"] = os.path.join(output_dir, "{}.txt".format(filter["output_table"]))
+			filter["pre_table_output_path"] = "{}_{}_pre.txt".format(output_dir, filter["output_table"])
+			filter["table_output_path"] = "{}_{}.txt".format(output_dir, filter["output_table"])
 			top_filter_dict.append(filter)
 	return top_filter_dict
 
