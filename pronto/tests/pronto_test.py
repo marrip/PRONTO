@@ -433,7 +433,7 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
                         'min_depth_tumor_dna': '0',
                     }
                 },
-                "output_dir"
+                "output_dir/sample1"
             ),
             does_not_raise(),
             [
@@ -445,8 +445,8 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
                         'output_table': 'output_table',
                         'min_depth_tumor_dna': '0',
                         'filter_columns': ['col1', 'col2'],
-                        'pre_table_output_path': 'output_dir/output_table_pre.txt',
-                        'table_output_path': 'output_dir/output_table.txt',
+                        'pre_table_output_path': 'output_dir/sample1_output_table_pre.txt',
+                        'table_output_path': 'output_dir/sample1_output_table.txt',
                     }
             ],
         ),
@@ -461,7 +461,7 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
                         'min_depth_tumor_dna': '0',
                     }
                 },
-                "output_dir"
+                "output_dir/sample1"
             ),
             does_not_raise(),
             [
@@ -473,8 +473,8 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
                         'output_table': 'output_table',
                         'min_depth_tumor_dna': '0',
                         'filter_columns': ['col1', 'col2'],
-                        'pre_table_output_path': 'output_dir/output_table_pre.txt',
-                        'table_output_path': 'output_dir/output_table.txt',
+                        'pre_table_output_path': 'output_dir/sample1_output_table_pre.txt',
+                        'table_output_path': 'output_dir/sample1_output_table.txt',
                     }
             ],
         ),
@@ -489,7 +489,7 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
                         'filter_column_add': 'col1',
                     }
                 },
-                "output_dir"
+                "output_dir/sample1"
             ),
             does_not_raise(),
             [
@@ -501,8 +501,8 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
                         'output_table': 'output_table',
                         'min_depth_tumor_dna': None,
                         'filter_columns': ['col1', 'col2'],
-                        'pre_table_output_path': 'output_dir/output_table_pre.txt',
-                        'table_output_path': 'output_dir/output_table.txt',
+                        'pre_table_output_path': 'output_dir/sample1_output_table_pre.txt',
+                        'table_output_path': 'output_dir/sample1_output_table.txt',
                     }
             ],
         ),
@@ -518,7 +518,7 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
                         'min_depth_tumor_dna': '0',
                     }
                 },
-                "output_dir"
+                "output_dir/sample1"
             ),
             does_not_raise(),
             [
@@ -530,8 +530,8 @@ def test_add_table_name(inputs, exception, want_shape, want_paragraph):
                         'output_table': 'output_table',
                         'min_depth_tumor_dna': '0',
                         'filter_columns': ['col1'],
-                        'pre_table_output_path': 'output_dir/output_table_pre.txt',
-                        'table_output_path': 'output_dir/output_table.txt',
+                        'pre_table_output_path': 'output_dir/sample1_output_table_pre.txt',
+                        'table_output_path': 'output_dir/sample1_output_table.txt',
                     }
             ],
         ),
@@ -553,7 +553,7 @@ def test_parse_topfilter(inputs, exception, want):
                     "filter_column": ["keyword1", "keyword2", "keyword1,keyword2", "other"],
                     "IGV_QC": ["OK", "Not OK", "OK", "OK"],
                     "Class_judgement": ["exclude", "exclude", "include", "include"],
-                    "SampleID": ["sample1", "sample1", "sample1", "sample1"],
+                    "Sample_ID": ["sample1", "sample1", "sample1", "sample1"],
                 }),
                 'sample1',
                 'filter_column',
@@ -564,7 +564,7 @@ def test_parse_topfilter(inputs, exception, want):
                 "filter_column": ["keyword1", "keyword1,keyword2"],
                 "IGV_QC": ["OK", "OK"],
                 "Class_judgement": ["exclude", "include"],
-                "SampleID": ["sample1", "sample1"],
+                "Sample_ID": ["sample1", "sample1"],
             }),
         ),
         (
@@ -573,7 +573,7 @@ def test_parse_topfilter(inputs, exception, want):
                     "filter_column": ["keyword1", "keyword2", "keyword1,keyword2", "other"],
                     "IGV_QC": ["OK", "Not OK", "OK", "OK"],
                     "Class_judgement": ["exclude", "exclude", "include", "include"],
-                    "SampleID": ["sample1", "sample1", "sample2", "sample1"],
+                    "Sample_ID": ["sample1", "sample1", "sample2", "sample1"],
                 }),
                 'sample1',
                 'filter_column',
@@ -584,7 +584,7 @@ def test_parse_topfilter(inputs, exception, want):
                 "filter_column": ["keyword1"],
                 "IGV_QC": ["OK"],
                 "Class_judgement": ["exclude"],
-                "SampleID": ["sample1"],
+                "Sample_ID": ["sample1"],
             }),
         ),
         (
@@ -593,7 +593,7 @@ def test_parse_topfilter(inputs, exception, want):
                     "filter_column": ["keyword1", "keyword2", "keyword1,keyword2", "other"],
                     "IGV_QC": ["OK", "Not OK", "OK", "OK"],
                     "Class_judgement": ["exclude", "exclude", "include", "include"],
-                    "SampleID": ["sample1", "sample1", "sample1", "sample1"],
+                    "Sample_ID": ["sample1", "sample1", "sample1", "sample1"],
                 }),
                 'sample1',
                 'filter_column',
@@ -604,7 +604,7 @@ def test_parse_topfilter(inputs, exception, want):
                 "filter_column": ["keyword1", "keyword2", "keyword1,keyword2"],
                 "IGV_QC": ["OK", "Not OK", "OK"],
                 "Class_judgement": ["exclude", "exclude", "include"],
-                "SampleID": ["sample1", "sample1", "sample1"],
+                "Sample_ID": ["sample1", "sample1", "sample1"],
             }),
         ),
         (
@@ -613,7 +613,7 @@ def test_parse_topfilter(inputs, exception, want):
                     "filter_column": ["keyword1", "keyword2", "keyword1,keyword2", "other"],
                     "IGV_QC": ["OK", "Not OK", "OK", "OK"],
                     "Class_judgement": ["exclude", "exclude", "include", "include"],
-                    "SampleID": ["sample1", "sample1", "sample1", "sample1"],
+                    "Sample_ID": ["sample1", "sample1", "sample1", "sample1"],
                 }),
                 'sample1',
                 'filter_column',
@@ -624,7 +624,7 @@ def test_parse_topfilter(inputs, exception, want):
                 "filter_column": ["keyword2", "other"],
                 "IGV_QC": ["Not OK", "OK"],
                 "Class_judgement": ["exclude", "include"],
-                "SampleID": ["sample1", "sample1"],
+                "Sample_ID": ["sample1", "sample1"],
             }),
         ),
         (
@@ -633,7 +633,7 @@ def test_parse_topfilter(inputs, exception, want):
                     "filter_column": ["keyword1", "keyword2", "keyword1,keyword2", "other"],
                     "IGV_QC": ["OK", "Not OK", "OK", "OK"],
                     "Class_judgement": ["exclude", "exclude", "include", "include"],
-                    "SampleID": ["sample1", "sample1", "sample1", "sample1"],
+                    "Sample_ID": ["sample1", "sample1", "sample1", "sample1"],
                 }),
                 'sample1',
                 'filter_column',
@@ -644,7 +644,7 @@ def test_parse_topfilter(inputs, exception, want):
                 "filter_column": ["other"],
                 "IGV_QC": ["OK"],
                 "Class_judgement": ["include"],
-                "SampleID": ["sample1"],
+                "Sample_ID": ["sample1"],
             }),
         ),
         (
@@ -652,7 +652,7 @@ def test_parse_topfilter(inputs, exception, want):
                 pandas.DataFrame({
                     "filter_column": ["keyword1", "keyword2", "keyword1,keyword2", "other"],
                     "IGV_QC": ["OK", "Not OK", "OK", "OK"],
-                    "SampleID": ["sample1", "sample1", "sample1", "sample1"],
+                    "Sample_ID": ["sample1", "sample1", "sample1", "sample1"],
                 }),
                 'sample1',
                 'filter_column',
@@ -667,7 +667,7 @@ def test_parse_topfilter(inputs, exception, want):
                     "filter_column": ["keyword1", "keyword2", "keyword1,keyword2", "other"],
                     "IGV_QC": ["OK", "Not OK", "Not OK", "OK"],
                     "Class_judgement": ["exclude", "exclude", "include", "include"],
-                    "SampleID": ["sample1", "sample1", "sample1", "sample1"],
+                    "Sample_ID": ["sample1", "sample1", "sample1", "sample1"],
                 }),
                 'sample1',
                 'filter_column',
