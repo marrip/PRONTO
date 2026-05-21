@@ -199,7 +199,7 @@ def test_normalize_column_index(inputs, exception, want):
             does_not_raise(),
             pandas.DataFrame({
                 "one": [1, 2],
-                "two": ["3.33", "4.44"],
+                "two": pandas.Series(["3.33", "4.44"], dtype="string"),
             }),
         ),
         (

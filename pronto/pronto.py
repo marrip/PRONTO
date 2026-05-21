@@ -49,11 +49,9 @@ def normalize_column_index(df: pandas.DataFrame, exp_col_idx: list):
 def set_column_to_2_decimals(df: pandas.DataFrame, col_name: str):
 	if col_name in df.columns:
 		if df[col_name].dtype == float:
-			print('before', df.columns, df[col_name])
 			df = df.assign(
 				**{col_name: df[col_name].round(2).astype("string")}
 			)
-			print('after', df.columns,  df[col_name])
 	else:
 		logging.info("Column {} not found in dataframe".format(col_name))
 	return df
