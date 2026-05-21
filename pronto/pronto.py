@@ -4,6 +4,7 @@ import logging
 import os
 import pandas
 import pptx
+from pandas.api.types import is_float_dtype
 
 # get tumor mutational burden label
 def get_tmb_string(val):
@@ -48,7 +49,7 @@ def normalize_column_index(df: pandas.DataFrame, exp_col_idx: list):
 def set_column_to_2_decimals(df: pandas.DataFrame, col_name: str):
 	if col_name in df.columns:
 		if df[col_name].dtype == float:
-			df.loc[:, col_name] = df[col_name].round(2).astype(str)
+			df = df.assign(col_name=df[col_name].round(2).astype("string"))
 	else:
 		logging.info("Column {} not found in dataframe".format(col_name))
 	return df
