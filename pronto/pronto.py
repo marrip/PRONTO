@@ -100,13 +100,13 @@ def parse_topfilter(cfg : configparser.ConfigParser, output_dir: str) -> list:
 def filter_small_variant_data(data: pandas.DataFrame, sample_id: str, filter_column: str, keyword: str) -> pandas.DataFrame:
 
 	# check if required columns are present in data
-	for column_name in [filter_column, "IGV_QC", "Class_judgement", "SampleID"]:
+	for column_name in [filter_column, "IGV_QC", "Class_judgement", "Sample_ID"]:
 		if column_name not in data.columns:
 			logging.error("Column {} not found in data".format(column_name))
 			raise ValueError
 	
 	# only consider data for the specified sample_id
-	data = data[data['SampleID'] == sample_id]
+	data = data[data['Sample_ID'] == sample_id]
 
 	# check if IGV_QC is "Not OK" but Class_judgement is not "exclude"
 	if data[(data['IGV_QC'] == "Not OK") & (data['Class_judgement'] != "exclude")].shape[0] > 0:
