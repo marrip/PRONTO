@@ -1379,7 +1379,7 @@ def main(argv):
 						# remove duplicates
 						concat_data = concat_data.drop_duplicates()
 						top_filter_output_file = "{}_preMTB_workingTable.txt".format(output_file_preMTB_table_path)
-						concat_data.write_csv(top_filter_output_file, sep='\t', index=False)
+						concat_data.to_csv(top_filter_output_file, sep='\t', index=False)
 						continue
 
 					if(filter_section == "1"):
